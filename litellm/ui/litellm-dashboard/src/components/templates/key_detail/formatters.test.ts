@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatMoney, formatRelative } from "./formatters";
+import { formatDate, formatDateTime, formatMoney, formatRelative } from "./formatters";
 
 describe("formatMoney", () => {
   it("shows dollars with two decimals and thousands separators", () => {
@@ -35,4 +35,10 @@ describe("formatRelative", () => {
   it("calls anything under a minute now", () => {
     expect(formatRelative("2026-11-21T11:59:40Z", now, "en")).toBe("this minute");
   });
+});
+
+it("formats key lifecycle dates and their tooltips in the selected language", () => {
+  const iso = "2026-11-21T12:00:00Z";
+  expect(formatDate(iso, "zh-CN")).toContain("11月");
+  expect(formatDateTime(iso, "zh-CN")).toContain("11月");
 });

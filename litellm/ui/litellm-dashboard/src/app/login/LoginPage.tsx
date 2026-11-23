@@ -32,6 +32,7 @@ import { useWorker } from "@/hooks/useWorker";
 import i18n from "@/i18n/i18n";
 import { uiHref } from "@/utils/uiHref";
 import { productNames } from "@/i18n/untranslated/productNames";
+import LanguageField from "@/components/SidebarAccountMenu/LanguageField";
 
 const loginSchema = z.object({
   username: z.string().min(1, { error: () => i18n.t("login.schema.usernameRequired") }),
@@ -230,6 +231,7 @@ function LoginPageContent() {
                 </AlertDescription>
               </Alert>
             </div>
+            <LanguageField />
           </CardContent>
         </Card>
       </div>
@@ -379,6 +381,7 @@ function LoginPageContent() {
             </div>
             {uiConfig?.sso_configured && <SsoEnabledNotice />}
           </TooltipProvider>
+          <LanguageField />
         </CardContent>
       </Card>
     </div>

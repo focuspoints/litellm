@@ -66,7 +66,7 @@ export function LifecycleCard({ source, createdBy, nowMs }: LifecycleCardProps) 
     if (afterExpiry) return label("afterExpiry");
     return interval ? t("keyDetail.overview.lifecycle.every", { interval }) : undefined;
   };
-  const dated = (at: string) => ({ when: formatDate(at), title: formatDateTime(at) });
+  const dated = (at: string) => ({ when: formatDate(at, locale), title: formatDateTime(at, locale) });
 
   const lastUsedItem = (at: string | null): TimelineItem =>
     at
@@ -75,7 +75,7 @@ export function LifecycleCard({ source, createdBy, nowMs }: LifecycleCardProps) 
           state: "now",
           label: label("lastUsed"),
           when: formatRelative(at, nowMs, locale),
-          title: formatDateTime(at),
+          title: formatDateTime(at, locale),
         }
       : { key: "lastUsed", state: "never", label: label("lastUsed"), when: label("never") };
 

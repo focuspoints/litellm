@@ -20,9 +20,10 @@ const markers = (value: string) => ({
 });
 
 describe("zh-CN locale", () => {
-  it("only uses English keys and keeps their placeholders, rich-text tags and $t references", () => {
+  it("covers every English key and keeps its placeholders, rich-text tags and $t references", () => {
     const english = new Map(entries(en));
-    const incompatible = entries(zh).filter(([key, value]) => {
+    const chinese = new Map(entries(zh));
+    const incompatible = [...chinese].filter(([key, value]) => {
       const source = english.get(key);
       return (
         source === undefined ||
@@ -30,8 +31,8 @@ describe("zh-CN locale", () => {
         JSON.stringify(markers(value)) !== JSON.stringify(markers(source))
       );
     });
-    expect(entries(zh).length).toBeGreaterThan(0);
     expect(incompatible).toEqual([]);
+    expect([...english.keys()].filter((key) => !chinese.has(key))).toEqual([]);
   });
 
   it("loads through the language registry, keeps dynamic values and falls back to English for missing keys", async () => {
@@ -86,6 +87,6 @@ describe("zh-CN locale", () => {
       "Test Client 将获得所有已开启服务器的访问权限。请关闭不应使用的服务器，按需登录，然后点击“完成连接”。",
     );
     expect(instance.t("customerPortal.list.columns.customer")).toBe("客户组织");
-    expect(instance.t("customerPortal.createDialog.submit")).toBe("创建客户");
+    expect(instance.t("customerPortal.createDialog.submit")).toBe("创建客户组织");
   });
 });

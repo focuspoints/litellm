@@ -17,7 +17,7 @@ import { cn } from "@/lib/cva.config";
 
 import { headroomKey, meterTone, ownerText, resetCaption, resetSentence, SCOPE_KEYS } from "./budgetText";
 import { budgetThrottles, canStillSpend } from "./canStillSpend";
-import { formatDate, formatMoney } from "./formatters";
+import { formatMoney } from "./formatters";
 import { ResourceLink } from "./ResourceLink";
 import { Caption, SectionCard, SubHead } from "./SectionCard";
 
@@ -83,22 +83,27 @@ export function SpendCard(props: SpendCardProps) {
   );
 }
 
-function periodHint(budgetDuration: string | null, budgetResetAt: string | null): string | null {
+function spendPeriod(budgetDuration: string | null, budgetResetAt: string | null) {
   const period = budgetPeriodRange(budgetDuration, budgetResetAt);
   if (!period) return null;
   const start = dayjs.utc(period.start);
   const end = dayjs.utc(period.end);
   if (end.diff(start) < TWO_DAYS_MS) return null;
-  return `${start.format("MMM D")}|${end.subtract(1, "millisecond").format("MMM D")}|${end.format("MMM D, YYYY")}`;
+  return { start: start.toDate(), end: end.subtract(1, "millisecond").toDate(), reset: end.toDate() };
 }
 
 function SpendHeadline({ spend, budgetDuration, budgetResetAt, hasOwnBudget }: SpendCardProps) {
   const { t } = useTranslation();
   const resetTime = formatBudgetResetTime(budgetResetAt);
-  const range = periodHint(budgetDuration, budgetResetAt);
-  const [start, end, reset] = range ? range.split("|") : [];
+  const range = spendPeriod(budgetDuration, budgetResetAt);
   const hint = (() => {
-    if (range) return t("keyDetail.overview.spend.periodRange", { start, end, reset });
+    if (range) {
+      return t("keyDetail.overview.spend.periodRange", {
+        start: t("format.monthDay", { val: range.start, timeZone: "UTC" }),
+        end: t("format.monthDay", { val: range.end, timeZone: "UTC" }),
+        reset: t("format.date", { val: range.reset, timeZone: "UTC" }),
+      });
+    }
     if (resetTime) return t("keyDetail.overview.spend.resetsAt", { time: resetTime });
     return hasOwnBudget ? t("keyDetail.overview.spend.neverResets") : t("keyDetail.overview.spend.neverResetsNoBudget");
   })();
@@ -147,7 +152,7 @@ function LifetimeStat({ totalSpend, lifetimeNeedsBackfill, createdAt }: SpendCar
       <p className="m-0 mt-1 text-[15px] leading-[22px] font-semibold tabular-nums">{formatMoney(total)}</p>
       {createdAt && !lifetimeNeedsBackfill ? (
         <p className="m-0 text-xs text-muted-foreground">
-          {t("keyDetail.overview.spend.since", { date: formatDate(createdAt) })}
+          {t("keyDetail.overview.spend.since", { date: t("format.date", { val: createdAt }) })}
         </p>
       ) : null}
     </div>

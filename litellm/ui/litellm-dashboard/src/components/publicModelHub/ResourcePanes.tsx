@@ -100,20 +100,12 @@ export function SkillsPane({ rows, loading, error, onRetry, selected, onSelect }
   const columns: ColumnDef<Plugin>[] = [
     {
       accessorKey: "name",
-      header: ({ column }) => (
-        <DataTableSortHeader column={column} title={t("publicModelHub.catalog.skill", { defaultValue: "Skill" })} />
-      ),
+      header: ({ column }) => <DataTableSortHeader column={column} title={t("publicModelHub.catalog.skill")} />,
       meta: { skeleton: "twoLine", className: "min-w-48 whitespace-normal" },
       cell: ({ row }) => <SkillLink skill={row.original} selected={selected} onSelect={onSelect} />,
     },
     ...getSkillMetadataColumns<Plugin>(),
   ];
-  const countOptions = {
-    count: shown.length,
-    defaultValue_one: "{{count}} skill",
-    defaultValue_other: "{{count}} skills",
-    defaultValue: "{{count}} skills",
-  };
 
   return (
     <div
@@ -122,9 +114,7 @@ export function SkillsPane({ rows, loading, error, onRetry, selected, onSelect }
     >
       <CatalogFilters count={domains.length} onClear={() => setDomains([])}>
         <fieldset data-slot="catalog-filter-section" className="min-w-0">
-          <legend className="mb-3 text-sm font-medium">
-            {t("publicModelHub.catalog.domain", { defaultValue: "Domain" })}
-          </legend>
+          <legend className="mb-3 text-sm font-medium">{t("publicModelHub.catalog.domain")}</legend>
           <div className="flex flex-col gap-3">
             <Button
               variant="ghost"
@@ -133,7 +123,7 @@ export function SkillsPane({ rows, loading, error, onRetry, selected, onSelect }
               aria-pressed={domains.length === 0}
               onClick={() => setDomains([])}
             >
-              {t("publicModelHub.catalog.allDomains", { defaultValue: "All domains" })}
+              {t("publicModelHub.catalog.allDomains")}
               <span className="text-xs text-muted-foreground tabular-nums">{loading ? "-" : skills.length}</span>
             </Button>
             {options.map(({ domain, count }) => (
@@ -161,8 +151,8 @@ export function SkillsPane({ rows, loading, error, onRetry, selected, onSelect }
         </div>
         <div data-slot="catalog-count" className="text-sm text-muted-foreground tabular-nums" aria-live="polite">
           {loading
-            ? t("publicModelHub.catalog.loadingSkills", { defaultValue: "Loading skills…" })
-            : !error && t("publicModelHub.catalog.skillCount", countOptions)}
+            ? t("publicModelHub.catalog.loadingSkills")
+            : !error && t("publicModelHub.catalog.skillCount", { count: shown.length })}
         </div>
         {showRefreshError && <LoadFailed noun={t("publicModelHub.skillsPane.noun")} onRetry={onRetry} />}
         <div data-slot="catalog-table" aria-busy={loading}>
@@ -174,7 +164,7 @@ export function SkillsPane({ rows, loading, error, onRetry, selected, onSelect }
             columns={columns}
             getRowId={(skill) => skill.name}
             isLoading={loading}
-            loadingMessage={t("publicModelHub.catalog.loadingSkills", { defaultValue: "Loading skills…" })}
+            loadingMessage={t("publicModelHub.catalog.loadingSkills")}
             isError={error}
             errorMessage={t("publicModelHub.loadFailed.title", { noun: t("publicModelHub.skillsPane.noun") })}
             onRetry={onRetry}

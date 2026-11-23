@@ -28,15 +28,15 @@ import { ModelInspector } from "./ModelInspector";
 import { catalogTypography } from "./fonts";
 
 const SORTS = [
-  { value: "model_group", label: "Name", desc: false },
-  { value: "providers", label: "Provider", desc: false },
-  { value: "mode", label: "Mode", desc: false },
-  { value: "input_cost_per_token", label: "Input price", desc: false },
-  { value: "output_cost_per_token", label: "Output price", desc: false },
-  { value: "max_input_tokens", label: "Context", desc: true },
-  { value: "max_output_tokens", label: "Max output", desc: true },
-  { value: "rpm", label: "Rate limit", desc: true },
-];
+  { value: "model_group", desc: false },
+  { value: "providers", desc: false },
+  { value: "mode", desc: false },
+  { value: "input_cost_per_token", desc: false },
+  { value: "output_cost_per_token", desc: false },
+  { value: "max_input_tokens", desc: true },
+  { value: "max_output_tokens", desc: true },
+  { value: "rpm", desc: true },
+] as const;
 
 type Models = HubData["models"];
 const filterSection = "min-w-0 border-b border-b-border pb-[22px] last:border-b-0";
@@ -50,7 +50,7 @@ function SortControl({ models }: { models: Models }) {
   const { t } = useTranslation();
   const options = SORTS.map((sort) => ({
     ...sort,
-    label: t(`publicModelHub.catalog.sort.${sort.value}`, { defaultValue: sort.label }),
+    label: t(`publicModelHub.catalog.sort.${sort.value}`),
   }));
   const field = models.sorting[0]?.id ?? "model_group";
   const desc = models.sorting[0]?.desc ?? false;
@@ -147,7 +147,7 @@ function ModelFilters({ hub }: { hub: HubData }) {
   return (
     <CatalogFilters count={models.columnFilters.length} onClear={() => models.onColumnFiltersChange([])}>
       <CatalogFilter
-        label={t("publicModelHub.catalog.capabilities", { defaultValue: "Capabilities" })}
+        label={t("publicModelHub.catalog.capabilities")}
         options={facets.features.map((feature) => ({ value: feature, label: featureFacetLabel(feature) }))}
         values={models.featureValues}
         onChange={models.onFeaturesChange}
@@ -291,12 +291,6 @@ export function ModelsPane({
   const opened = useOpenedModel(selected, models.rows, !models.isLoading);
   const detailsLoading = opened.model === undefined && (models.isLoading || opened.pending);
   const missingName = opened.model === undefined && !detailsLoading ? selected : null;
-  const countOptions = {
-    count: models.rowCount,
-    defaultValue_one: "{{count}} model",
-    defaultValue_other: "{{count}} models",
-    defaultValue: "{{count}} models",
-  };
   const columns: ColumnDef<ModelGroupInfo>[] = [
     {
       accessorKey: "model_group",
@@ -311,7 +305,7 @@ export function ModelsPane({
         <DataTableSortHeader
           className="[font:inherit] text-inherit"
           column={column}
-          title={t("publicModelHub.catalog.model", { defaultValue: "Model" })}
+          title={t("publicModelHub.catalog.model")}
         />
       ),
       cell: ({ row }) => <ModelLink model={row.original} selected={selected} onSelect={onSelect} />,
@@ -325,7 +319,7 @@ export function ModelsPane({
         <DataTableSortHeader
           column={column}
           className="[font:inherit] text-inherit"
-          title={t("publicModelHub.catalog.inputLimit", { defaultValue: "Input limit" })}
+          title={t("publicModelHub.catalog.inputLimit")}
         />
       ),
       cell: ({ row }) => (row.original.max_input_tokens === 0 ? "0" : formatTokens(row.original.max_input_tokens)),
@@ -339,7 +333,7 @@ export function ModelsPane({
         <DataTableSortHeader
           column={column}
           className="[font:inherit] text-inherit"
-          title={t("publicModelHub.catalog.inputPrice", { defaultValue: "Input /1M" })}
+          title={t("publicModelHub.catalog.inputPrice")}
         />
       ),
       cell: ({ row }) => (
@@ -358,7 +352,7 @@ export function ModelsPane({
         <DataTableSortHeader
           column={column}
           className="[font:inherit] text-inherit"
-          title={t("publicModelHub.catalog.outputPrice", { defaultValue: "Output /1M" })}
+          title={t("publicModelHub.catalog.outputPrice")}
         />
       ),
       cell: ({ row }) => (
@@ -384,7 +378,7 @@ export function ModelsPane({
           <SearchInput
             value={models.searchValue}
             onChange={models.onSearchChange}
-            placeholder={t("publicModelHub.catalog.searchModels", { defaultValue: "Search models" })}
+            placeholder={t("publicModelHub.catalog.searchModels")}
             showShortcut
           />
         </div>
@@ -396,8 +390,8 @@ export function ModelsPane({
             aria-live="polite"
           >
             {models.isFetching || models.isLoading
-              ? t("publicModelHub.catalog.loadingModels", { defaultValue: "Loading models…" })
-              : !models.error && t("publicModelHub.catalog.modelCount", countOptions)}
+              ? t("publicModelHub.catalog.loadingModels")
+              : !models.error && t("publicModelHub.catalog.modelCount", { count: models.rowCount })}
           </div>
           <SortControl models={models} />
         </div>

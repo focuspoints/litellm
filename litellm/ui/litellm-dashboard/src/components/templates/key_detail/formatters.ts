@@ -16,8 +16,8 @@ export const formatMoney = (value: number): string => `$${value.toLocaleString("
 
 export const formatCount = (value: number): string => value.toLocaleString("en-US");
 
-export const formatDate = (iso: string): string =>
-  new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+export const formatDate = (iso: string, locale: string): string =>
+  new Date(iso).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
 
 const DATE_TIME_FORMAT: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -27,7 +27,8 @@ const DATE_TIME_FORMAT: Intl.DateTimeFormatOptions = {
   minute: "2-digit",
 };
 
-export const formatDateTime = (iso: string): string => new Date(iso).toLocaleString("en-US", DATE_TIME_FORMAT);
+export const formatDateTime = (iso: string, locale: string): string =>
+  new Date(iso).toLocaleString(locale, DATE_TIME_FORMAT);
 
 export const formatRelative = (iso: string, nowMs: number, locale: string): string => {
   const seconds = Math.round((Date.parse(iso) - nowMs) / 1000);

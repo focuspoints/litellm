@@ -53,6 +53,7 @@ vi.mock("@/hooks/useWorker", () => ({
 
 import { useUIConfig } from "@/app/(dashboard)/hooks/uiConfig/useUIConfig";
 import { switchToWorkerUrl } from "@/components/networking";
+import { englishName, nativeName } from "@/i18n/languages";
 
 let WORKERS: { worker_id: string; name: string; url: string }[] = [];
 
@@ -106,6 +107,21 @@ describe("LoginPage submit payload", () => {
     await waitFor(() => expect(mockMutate).toHaveBeenCalledTimes(1));
     expect(mockMutate.mock.calls[0][0]).toStrictEqual({ username: "admin", password: "sk-9876", useV3: false });
     expect(switchToWorkerUrl).not.toHaveBeenCalled();
+  });
+
+  it("makes English and Simplified Chinese available before login", async () => {
+    const user = userEvent.setup();
+    renderLoginPage();
+    await screen.findByRole("heading", { name: "Login" });
+
+    const language = screen.getByRole("combobox", { name: /Language/ });
+    expect(language).toHaveTextContent(nativeName("en"));
+
+    await user.click(language);
+
+    expect(await screen.findByRole("option", { name: nativeName("en") })).toBeInTheDocument();
+    const chinese = await screen.findByRole("option", { name: new RegExp(nativeName("zh-CN")) });
+    expect(chinese).toHaveTextContent(englishName("zh-CN"));
   });
 
   it("submits on Enter from the password field", async () => {
